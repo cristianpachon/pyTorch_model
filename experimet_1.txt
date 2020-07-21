@@ -1,0 +1,68 @@
+class BasicNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 32, 3)
+        self.conv2 = nn.Conv2d(32, 16, 3)
+        self.conv3 = nn.Conv2d(16, 8, 3)
+        self.fc1 = nn.Linear(12800,5000)
+        self.fc2 = nn.Linear(5000, 1000)
+        self.fc3 = nn.Linear(1000, 128)
+        self.fc4 = nn.Linear(128, 1)
+        self.pool = nn.MaxPool2d(2)
+        self.relu = nn.ReLU()
+        self.drp1 = nn.Dropout(0.25)
+        self.drp2 = nn.Dropout(0.25)
+        self.drp3 = nn.Dropout(0.25)
+        
+    def forward(self, x):
+        fo = self.pool(self.relu(self.conv1(x)))
+        so = self.pool(self.relu(self.conv2(fo)))
+        to = self.pool(self.relu(self.conv3(so))).view(-1,12800)
+        fc1_out = self.drp1(self.relu(self.fc1(to)))
+        fc2_out = self.drp2(self.relu(self.fc2(fc1_out)))
+        fc3_out = self.drp3(self.relu(self.fc3(fc2_out)))
+        out = self.fc4(fc3_out)
+        return out
+        
+        
+epochs = 30
+batch_size = 100
+learning_rate = 0.001
+device = torch.device('cuda')
+model = BasicNet().to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=0.001)
+criterion = nn.BCEWithLogitsLoss(reduction='sum')
+
+
+
+
+Epoch 1, avg train loss per image 0.4890710579994027, avg valid loss per image 0.41370085318639294, auc 0.7423031727379553, sens 0.8521739130434782, spec 0.53215284249767, th 0.13722431659698486. Train images 12158
+Epoch 2, avg train loss per image 0.402709927365152, avg valid loss per image 0.39565325705070087, auc 0.7752704728716724, sens 0.8521739130434782, spec 0.5778191985088537, th 0.12100855261087418. Train images 12158
+Epoch 3, avg train loss per image 0.38613267469649293, avg valid loss per image 0.37770905772814456, auc 0.823100611856234, sens 0.8521739130434782, spec 0.6095060577819198, th 0.10935436934232712. Train images 12158
+Epoch 4, avg train loss per image 0.3556395488499928, avg valid loss per image 0.35248572764173436, auc 0.8358199278739008, sens 0.8521739130434782, spec 0.6337371854613234, th 0.10353942215442657. Train images 12158
+Epoch 5, avg train loss per image 0.31721641696152436, avg valid loss per image 0.36586869815371625, auc 0.8742615178897037, sens 0.8521739130434782, spec 0.7129543336439887, th 0.06243246793746948. Train images 12158
+Epoch 6, avg train loss per image 0.28188283593663654, avg valid loss per image 0.3197134776099521, auc 0.8874751813282548, sens 0.8521739130434782, spec 0.7269338303821062, th 0.08500049263238907. Train images 12158
+Epoch 7, avg train loss per image 0.24042871638061303, avg valid loss per image 0.32033714947111314, auc 0.8949430690060375, sens 0.8521739130434782, spec 0.7427772600186393, th 0.16209600865840912. Train images 12158
+Epoch 8, avg train loss per image 0.22025030320913191, avg valid loss per image 0.2820000804414657, auc 0.8978119048583816, sens 0.8521739130434782, spec 0.777260018639329, th 0.14779528975486755. Train images 12158
+Epoch 9, avg train loss per image 0.1860298786455127, avg valid loss per image 0.32369746379368436, auc 0.8974553263908587, sens 0.8521739130434782, spec 0.7735321528424977, th 0.07215583324432373. Train images 12158
+Epoch 10, avg train loss per image 0.16723378164671346, avg valid loss per image 0.315777426692768, auc 0.914149681915799, sens 0.8565217391304348, spec 0.8033550792171482, th 0.2051105946302414. Train images 12158
+Epoch 11, avg train loss per image 0.15641447407063105, avg valid loss per image 0.31618419758466604, auc 0.9040074557315936, sens 0.8521739130434782, spec 0.7837837837837838, th 0.06858038157224655. Train images 12158
+Epoch 12, avg train loss per image 0.14037488875253398, avg valid loss per image 0.3814391956242203, auc 0.9044714129421776, sens 0.8521739130434782, spec 0.8089468779123952, th 0.07805850356817245. Train images 12158
+Epoch 13, avg train loss per image 0.137440581446436, avg valid loss per image 0.31888971953128886, auc 0.9190202196199198, sens 0.8521739130434782, spec 0.8247903075489282, th 0.05149051919579506. Train images 12158
+Epoch 14, avg train loss per image 0.13085692688555559, avg valid loss per image 0.362966147003408, auc 0.9046638842740791, sens 0.8565217391304348, spec 0.777260018639329, th 0.018804624676704407. Train images 12158
+Epoch 15, avg train loss per image 0.12172387967593655, avg valid loss per image 0.4756851032751892, auc 0.8895092994043521, sens 0.8521739130434782, spec 0.7241379310344828, th 0.0038634424563497305. Train images 12158
+Epoch 16, avg train loss per image 0.11899197574194412, avg valid loss per image 0.396463601867842, auc 0.9096033064548806, sens 0.8521739130434782, spec 0.8014911463187325, th 0.014728433452546597. Train images 12158
+Epoch 17, avg train loss per image 0.11150390753955468, avg valid loss per image 0.4141800039471431, auc 0.9080959520239881, sens 0.8521739130434782, spec 0.8061509785647717, th 0.01648646779358387. Train images 12158
+Epoch 18, avg train loss per image 0.1103755819854385, avg valid loss per image 0.4160358928664318, auc 0.9149600875238058, sens 0.8521739130434782, spec 0.8136067101584343, th 0.018489962443709373. Train images 12158
+Epoch 19, avg train loss per image 0.1071013282211738, avg valid loss per image 0.4092176220367619, auc 0.9118157137647392, sens 0.8521739130434782, spec 0.8341099720410066, th 0.023899421095848083. Train images 12158
+Epoch 20, avg train loss per image 0.11114807061447794, avg valid loss per image 0.3513674314004453, auc 0.9128955792374083, sens 0.8521739130434782, spec 0.8080149114631874, th 0.032701365649700165. Train images 12158
+Epoch 21, avg train loss per image 0.10322361099110129, avg valid loss per image 0.3751317051429436, auc 0.918927022974999, sens 0.8521739130434782, spec 0.8089468779123952, th 0.015154074877500534. Train images 12158
+Epoch 22, avg train loss per image 0.0998001561429199, avg valid loss per image 0.42576431256882613, auc 0.9096114105109606, sens 0.8521739130434782, spec 0.7632805219012115, th 0.004325254820287228. Train images 12158
+Epoch 23, avg train loss per image 0.09902242148151953, avg valid loss per image 0.39243502917800294, auc 0.9112545078811946, sens 0.8521739130434782, spec 0.804287045666356, th 0.014257311820983887. Train images 12158
+Epoch 24, avg train loss per image 0.10153021783416141, avg valid loss per image 0.4012553358169277, auc 0.9112342477409944, sens 0.8521739130434782, spec 0.809878844361603, th 0.010917743667960167. Train images 12158
+Epoch 25, avg train loss per image 0.10229000548701436, avg valid loss per image 0.47646603909987995, auc 0.9056849953401678, sens 0.8521739130434782, spec 0.8136067101584343, th 0.012834831140935421. Train images 12158
+Epoch 26, avg train loss per image 0.10070486605255634, avg valid loss per image 0.42302738136382445, auc 0.9125653389521455, sens 0.8521739130434782, spec 0.8145386766076421, th 0.015046048909425735. Train images 12158
+Epoch 27, avg train loss per image 0.09897620067292089, avg valid loss per image 0.42289794489729887, auc 0.908205356781069, sens 0.8521739130434782, spec 0.7921714818266542, th 0.008522042073309422. Train images 12158
+Epoch 28, avg train loss per image 0.10063980809754693, avg valid loss per image 0.38242092521050663, auc 0.9109303456379919, sens 0.8521739130434782, spec 0.8033550792171482, th 0.029292810708284378. Train images 12158
+Epoch 29, avg train loss per image 0.1039704298341641, avg valid loss per image 0.5028918600160163, auc 0.9108675392033714, sens 0.8521739130434782, spec 0.7996272134203168, th 0.0024016520474106073. Train images 12158
+Epoch 30, avg train loss per image 0.08984461656662367, avg valid loss per image 0.410122733068576, auc 0.9109769439604523, sens 0.8521739130434782, spec 0.7800559179869525, th 0.008124954998493195. Train images 12158
